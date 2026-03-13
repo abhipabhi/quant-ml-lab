@@ -2,6 +2,7 @@
 
 ![Python](https://img.shields.io/badge/Python-3.10-blue)
 ![ML](https://img.shields.io/badge/Machine%20Learning-HMM-green)
+![Finance](https://img.shields.io/badge/Domain-Quantitative%20Finance-purple)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
 A machine learning system that detects the **current global financial market regime** using a Hidden Markov Model trained on multi-market financial time series.
