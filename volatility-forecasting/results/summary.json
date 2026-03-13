@@ -1,4 +1,0 @@
-{
-    "best_model_by_rmse": "GARCH(1,1)",
-    "best_model_by_mae": "Random Forest"
-}
