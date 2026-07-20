@@ -142,19 +142,19 @@ cd quant-ml-lab
 pip install -r requirements.txt
 ```
 
-Each project runs from the repository root as a standalone pipeline. The pipelines
-download market data via `yfinance`, so an internet connection is required, and
-they write their outputs into that project's `results/` folder.
+Each pipeline writes its outputs (`data/` and `results/`) relative to the current
+directory, so **run each one from inside its own project folder**. The pipelines
+download market data via `yfinance`, so an internet connection is required.
 
 ```bash
 # Market regime detection (HMM)
-python research/market_regime_detection/src/current_world_market_regime.py
+cd research/market_regime_detection && python src/current_world_market_regime.py
 
 # Volatility forecasting (Baseline vs GARCH vs Random Forest)
-python research/volatility_forecasting/src/volatility_forecasting_pipeline.py
+cd research/volatility_forecasting && python src/volatility_forecasting_pipeline.py
 
 # Pairs trading (cointegration test + backtest)
-python research/pairs_trading_cointegration/src/pairs_trading_pipeline.py
+cd research/pairs_trading_cointegration && python src/pairs_trading_pipeline.py
 ```
 
 Launch the unified dashboard once the pipelines have produced results:

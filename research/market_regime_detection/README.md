@@ -168,10 +168,12 @@ pip install -r requirements.txt
 
 # ▶️ Running the Regime Detector
 
-Run the main pipeline from the repository root:
+Run the main pipeline from inside the project directory (outputs are written
+relative to the current directory):
 
 ```bash
-python research/market_regime_detection/src/current_world_market_regime.py
+cd research/market_regime_detection
+python src/current_world_market_regime.py
 ```
 
 The script will:

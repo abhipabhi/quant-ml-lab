@@ -120,17 +120,18 @@ pip install -r requirements.txt
 
 # ▶️ Running the Pipeline
 
-Run the full strategy pipeline from the repository root:
-
-```bash
-python research/pairs_trading_cointegration/src/pairs_trading_pipeline.py
-```
-
-To only regenerate the exploratory spread dataset (no backtest), run the standalone
-generator from inside the project directory:
+Run the full strategy pipeline from inside the project directory (outputs are
+written relative to the current directory):
 
 ```bash
 cd research/pairs_trading_cointegration
+python src/pairs_trading_pipeline.py
+```
+
+To only regenerate the exploratory spread dataset (no backtest), run the standalone
+generator from the same directory:
+
+```bash
 python data/generate_pairs_dataset.py
 ```
 

@@ -167,10 +167,12 @@ pip install -r requirements.txt
 
 # ▶️ Running the Pipeline
 
-Run the forecasting pipeline from the repository root:
+Run the forecasting pipeline from inside the project directory (outputs are
+written relative to the current directory):
 
 ```
-python research/volatility_forecasting/src/volatility_forecasting_pipeline.py
+cd research/volatility_forecasting
+python src/volatility_forecasting_pipeline.py
 ```
 
 The script will:
