@@ -2,6 +2,7 @@ numpy
 pandas
 scikit-learn
 statsmodels
+arch
 hmmlearn
 yfinance
 matplotlib

@@ -153,8 +153,8 @@ volatility-forecasting/
 Clone the repository:
 
 ```
-git clone https://github.com/<username>/quant-ml-lab.git
-cd quant-ml-lab/volatility-forecasting
+git clone https://github.com/abhipabhi/quant-ml-lab.git
+cd quant-ml-lab
 ```
 
 Install dependencies:
@@ -167,10 +167,10 @@ pip install -r requirements.txt
 
 # ▶️ Running the Pipeline
 
-Run the forecasting pipeline:
+Run the forecasting pipeline from the repository root:
 
 ```
-python src/volatility_forecasting_pipeline.py
+python research/volatility_forecasting/src/volatility_forecasting_pipeline.py
 ```
 
 The script will:

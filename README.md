@@ -38,7 +38,7 @@ Techniques explored include:
 Project:
 
 ```
-research/regime/market_regime_detection
+research/market_regime_detection
 ```
 
 ---
@@ -56,7 +56,7 @@ Applications include:
 Project:
 
 ```
-research/volatility/volatility_forecasting
+research/volatility_forecasting
 ```
 
 Models explored:
@@ -74,7 +74,7 @@ Study **market-neutral trading strategies** that exploit temporary pricing ineff
 Project:
 
 ```
-research/stat_arb/pairs_trading_cointegration
+research/pairs_trading_cointegration
 ```
 
 Topics explored:
@@ -100,51 +100,71 @@ More projects will be added as research expands.
 
 # 📂 Repository Structure
 
-The repository is designed as a **scalable research lab** where new financial experiments and models can be added over time.
+The repository is designed as a **scalable research lab** where new financial experiments and models can be added over time. Each project under `research/` is self-contained, with its own `src/`, `data/`, `notebooks/`, `results/`, and README.
 
 ```
 quant-ml-lab/
 │
-├── research/              # Individual research projects
+├── research/                          # Self-contained research projects
+│   ├── market_regime_detection/       # HMM regime classification
+│   ├── volatility_forecasting/        # GARCH vs ML volatility forecasting
+│   └── pairs_trading_cointegration/   # Cointegration-based pairs trading
 │
-│   ├── regime/
-│   │   └── market_regime_detection/
+├── apps/                              # Applications built on research outputs
+│   └── quant_research_terminal/       # Streamlit dashboard
 │
-│   ├── volatility/
-│   │   └── volatility_forecasting/
-│
-│   └── stat_arb/
-│       └── pairs_trading_cointegration/
-│
-│
-├── src/                   # Reusable core research code
-│
-│   ├── data/              # Market data loaders
-│   ├── models/            # Statistical & ML models
-│   ├── backtesting/       # Strategy backtesting tools
-│   ├── indicators/        # Financial indicators
-│   └── utils/             # Helper utilities
-│
-│
-├── apps/                  # Applications built on research modules
-│
-│   └── quant_research_terminal/
-│
-│
-├── notebooks/             # Exploratory analysis notebooks
-│
-├── data/                  # Shared datasets
-│   ├── raw/
-│   └── processed/
-│
-├── experiments/           # Experimental ideas and prototypes
-│
-├── results/               # Saved outputs and visualizations
-│
-├── requirements.txt
+├── requirements.txt                   # Superset of all project dependencies
 ├── LICENSE
 └── README.md
 ```
+
+Each research project follows the same internal layout:
+
+```
+<project>/
+├── src/                 # Pipeline / model code
+├── data/                # raw/ and processed/ datasets
+├── notebooks/           # Exploratory analysis
+├── results/             # Saved metrics, charts, and JSON summaries
+├── README.md
+└── requirements.txt
+```
+
+---
+
+# 🚀 Getting Started
+
+Clone the repository and install the shared dependencies (a superset covering every project):
+
+```bash
+git clone https://github.com/abhipabhi/quant-ml-lab.git
+cd quant-ml-lab
+pip install -r requirements.txt
+```
+
+Each project runs from the repository root as a standalone pipeline. The pipelines
+download market data via `yfinance`, so an internet connection is required, and
+they write their outputs into that project's `results/` folder.
+
+```bash
+# Market regime detection (HMM)
+python research/market_regime_detection/src/current_world_market_regime.py
+
+# Volatility forecasting (Baseline vs GARCH vs Random Forest)
+python research/volatility_forecasting/src/volatility_forecasting_pipeline.py
+
+# Pairs trading (cointegration test + backtest)
+python research/pairs_trading_cointegration/src/pairs_trading_pipeline.py
+```
+
+Launch the unified dashboard once the pipelines have produced results:
+
+```bash
+streamlit run apps/quant_research_terminal/app.py
+```
+
+> A shared `src/` package for reusable loaders, indicators, and backtesting
+> utilities is planned as common code is factored out of the individual projects.
 
 ---
 

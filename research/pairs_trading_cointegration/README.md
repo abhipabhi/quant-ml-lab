@@ -6,11 +6,9 @@
 ![Finance](https://img.shields.io/badge/Domain-Quantitative%20Finance-purple)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
-A quantitative finance project that builds a **pairs trading dataset** using two historically related assets and prepares the foundation for a **statistical arbitrage strategy**.
+A quantitative finance project that builds and **backtests a mean-reversion pairs trading strategy** on two related assets, from raw prices all the way through to performance metrics.
 
-The objective is to identify whether two assets move together over time, construct their spread, and generate processed data for testing **mean-reversion trading signals**.
-
-This project serves as the dataset and research foundation for a full pairs trading pipeline.
+The pipeline estimates a hedge ratio, tests the pair for cointegration, constructs the spread and its z-score, generates long/short signals, and backtests the resulting strategy with standard risk metrics (Sharpe, drawdown, win rate).
 
 ---
 
@@ -25,56 +23,71 @@ The idea is simple:
 - measure deviations between them
 - trade when the spread moves abnormally far from its historical relationship
 
-This project prepares the raw and processed dataset required for:
-
-- cointegration testing
-- spread modeling
-- z-score signal generation
-- backtesting
-- performance analysis
-
 ---
 
 # 📊 Assets Used
 
-The first version of this project uses:
+The default run uses:
 
-- **KO** — Coca-Cola  
-- **PEP** — PepsiCo  
+- **KO** — Coca-Cola
+- **PEP** — PepsiCo
 
-This pair is a common example because both companies operate in a similar industry and often exhibit related price behavior.
+Both companies operate in a similar industry and often exhibit related price behavior, which makes them a common textbook pair. The tickers are configurable via `PairsTradingPipeline(ticker_y=..., ticker_x=...)`.
 
 ---
 
-# 📈 Dataset Construction
+# ⚙️ How the Pipeline Works
 
-The dataset pipeline performs the following steps:
+`src/pairs_trading_pipeline.py` runs end to end:
 
-1. Download adjusted closing prices for both assets  
-2. Align the price series by date  
-3. Compute daily log returns  
-4. Estimate the price spread  
-5. Compute rolling mean and rolling standard deviation of the spread  
-6. Compute spread z-score  
-7. Save raw and processed datasets  
+1. Download adjusted close prices for both assets
+2. Estimate the **hedge ratio** via OLS (`LinearRegression`)
+3. Run the **Engle-Granger cointegration test** (`statsmodels.tsa.stattools.coint`)
+4. Build the spread `y − β·x` and its rolling z-score (`lookback = 20`)
+5. Generate positions from z-score thresholds (entry ±2.0, exit ±0.5, stop ±3.5)
+6. Backtest the spread strategy and compute performance metrics
+7. Save datasets, a results summary, a backtest CSV, and charts
 
-The resulting processed dataset can later be used to generate trading signals and build a pairs trading strategy.
+---
+
+# 📈 Backtest Results
+
+Results from the default 10-year KO/PEP run (saved to `results/summary.json`):
+
+| Metric | Value |
+|--------|-------|
+| Cointegration p-value | 0.954 |
+| Hedge ratio (β) | 0.353 |
+| Total return | 17.9% |
+| Annualized return | 1.7% |
+| Annualized volatility | 9.4% |
+| Sharpe ratio | 0.18 |
+| Max drawdown | −26.7% |
+| Win rate | 52.1% |
+| Trades | 198 |
+
+> ⚠️ **Interpretation:** the Engle-Granger p-value of ~0.95 means we **cannot reject
+> the null of no cointegration** — over this window KO and PEP are not a statistically
+> cointegrated pair. The backtest is therefore best read as a **demonstration of the
+> methodology** (hedge ratio → spread → z-score signals → risk metrics) rather than
+> evidence of a tradeable edge. Re-running on a genuinely cointegrated pair is the
+> natural next step.
 
 ---
 
 # 📁 Project Structure
 
 ```
-pairs-trading-cointegration/
+pairs_trading_cointegration/
 │
 ├── src/
 │   ├── __init__.py
 │   └── pairs_trading_pipeline.py
 │
 ├── data/
+│   ├── generate_pairs_dataset.py       # standalone dataset builder
 │   ├── raw/
 │   │   └── ko_pep_prices.csv
-│   │
 │   └── processed/
 │       └── ko_pep_spread_dataset.csv
 │
@@ -82,6 +95,10 @@ pairs-trading-cointegration/
 │   └── pairs_trading_exploration.ipynb
 │
 ├── results/
+│   ├── summary.json
+│   ├── pairs_trading_backtest.csv
+│   ├── spread_zscore.png
+│   └── equity_curve.png
 │
 ├── requirements.txt
 └── README.md
@@ -91,84 +108,44 @@ pairs-trading-cointegration/
 
 # ⚙️ Installation
 
-Clone the repository:
+From the repository root:
 
-```
-git clone https://github.com/<username>/quant-ml-lab.git
-cd quant-ml-lab/pairs-trading-cointegration
-```
-
-Install dependencies:
-
-```
+```bash
+git clone https://github.com/abhipabhi/quant-ml-lab.git
+cd quant-ml-lab
 pip install -r requirements.txt
 ```
 
 ---
 
-# ▶️ Running the Dataset Generator
+# ▶️ Running the Pipeline
 
-Run the dataset generation script:
+Run the full strategy pipeline from the repository root:
 
+```bash
+python research/pairs_trading_cointegration/src/pairs_trading_pipeline.py
 ```
-python generate_pairs_dataset.py
+
+To only regenerate the exploratory spread dataset (no backtest), run the standalone
+generator from inside the project directory:
+
+```bash
+cd research/pairs_trading_cointegration
+python data/generate_pairs_dataset.py
 ```
-
-The script will:
-
-1. Download historical prices for KO and PEP  
-2. Save the raw price data  
-3. Build the spread dataset  
-4. Save the processed dataset  
 
 ---
 
 # 📊 Generated Outputs
 
-### Raw Price Data
-
-```
-data/raw/ko_pep_prices.csv
-```
-
-Contains aligned daily close prices for both stocks.
-
----
-
-### Processed Spread Dataset
-
-```
-data/processed/ko_pep_spread_dataset.csv
-```
-
-Contains:
-
-- asset prices  
-- log returns  
-- spread  
-- rolling spread statistics  
-- z-score of the spread  
-
----
-
-# 🔬 Features in the Processed Dataset
-
-| Feature | Description |
+| Output | Description |
 |--------|-------------|
-| KO_close | Coca-Cola closing price |
-| PEP_close | PepsiCo closing price |
-| ko_return | KO log return |
-| pep_return | PEP log return |
-| spread | Price spread between the two assets |
-| spread_mean_20 | 20-day rolling mean of spread |
-| spread_std_20 | 20-day rolling standard deviation of spread |
-| spread_zscore | Standardized spread deviation |
-
-These features are the basis for later:
-
-- entry/exit signals  
-- long/short spread trades  
-- mean-reversion backtesting  
+| `results/summary.json` | Cointegration p-value, hedge ratio, and all performance metrics |
+| `results/pairs_trading_backtest.csv` | Full backtest: spread, z-score, positions, returns, drawdown |
+| `results/spread_zscore.png` | Spread z-score with entry/exit thresholds |
+| `results/equity_curve.png` | Strategy cumulative return |
+| `data/raw/ko_pep_prices.csv` | Aligned daily close prices |
+| `data/processed/ko_pep_spread_dataset.csv` | Exploratory spread dataset |
 
 ---
 
@@ -176,12 +153,11 @@ These features are the basis for later:
 
 Possible next steps include:
 
-- Engle-Granger cointegration test  
-- hedge ratio estimation with OLS  
-- z-score trading signals  
-- backtesting engine  
-- Sharpe ratio and drawdown evaluation  
-- rolling hedge ratio estimation  
+- rolling / time-varying hedge ratio estimation
+- selecting pairs by screening a universe for cointegration
+- transaction costs and slippage modeling
+- half-life of mean reversion for adaptive lookbacks
+- Kalman-filter spread estimation
 
 ---
 

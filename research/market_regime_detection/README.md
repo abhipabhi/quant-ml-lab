@@ -33,11 +33,11 @@ The pipeline automatically:
 
 [ CURRENT MARKET SNAPSHOT ]
 Date           : 2026-03-12
-Current Regime : Bull / High-Vol
-Confidence     : Very High (100%)
+Current Regime : Neutral / Stable
+Confidence     : Very High (99.82%)
 
-Interpretation : Markets are positive but volatile, indicating
-risk-on conditions with elevated uncertainty.
+Interpretation : Markets appear range-bound or mildly positive,
+with relatively stable conditions.
 ```
 
 The pipeline also generates:
@@ -129,6 +129,7 @@ market-regime-detection/
 │   └── current_world_market_regime.py
 │
 ├── data/
+│   ├── generate_market_dataset.py
 │   ├── raw/
 │   │   └── world_market_prices.csv
 │   │
@@ -153,8 +154,8 @@ market-regime-detection/
 Clone the repository:
 
 ```bash
-git clone https://github.com/<username>/market-regime-detection.git
-cd market-regime-detection
+git clone https://github.com/abhipabhi/quant-ml-lab.git
+cd quant-ml-lab
 ```
 
 Install dependencies:
@@ -167,10 +168,10 @@ pip install -r requirements.txt
 
 # ▶️ Running the Regime Detector
 
-Run the main pipeline:
+Run the main pipeline from the repository root:
 
 ```bash
-python src/current_world_market_regime.py
+python research/market_regime_detection/src/current_world_market_regime.py
 ```
 
 The script will:
@@ -196,9 +197,11 @@ Example:
 ```json
 {
     "date": "2026-03-12",
-    "current_regime": "Bull / High-Vol",
-    "confidence": 1.0,
-    "confidence_label": "Very High"
+    "current_regime": "Neutral / Stable",
+    "state_id": 0,
+    "confidence": 0.99818,
+    "confidence_label": "Very High",
+    "interpretation": "Markets appear range-bound or mildly positive, with relatively stable conditions."
 }
 ```
 
